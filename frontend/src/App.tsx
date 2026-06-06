@@ -33,30 +33,40 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  const tabs: { id: Tab; label: string }[] = [
-    { id: "map", label: "Live Map" },
-    { id: "route", label: "Safe Route" },
-    { id: "chat", label: "AI Assistant" },
-    { id: "alerts", label: "Alerts" },
+  const tabs: { id: Tab; label: string; icon: string }[] = [
+    { id: "map", label: "Live Map", icon: "🗺️" },
+    { id: "route", label: "Safe Route", icon: "🛕" },
+    { id: "chat", label: "AI Guide", icon: "🙏" },
+    { id: "alerts", label: "Alerts", icon: "🔔" },
   ];
 
   return (
-    <div className="h-screen bg-gray-900 flex flex-col">
+    <div className="h-screen bg-cream flex flex-col overflow-hidden">
 
       {/* Header */}
-      <div className="bg-gray-800 border-b border-gray-700 px-4 py-3 flex items-center justify-between">
-        <div>
-          <h1 className="text-white font-bold text-lg">🕉️ KumbhFlow</h1>
-          <p className="text-gray-400 text-xs">Simhastha Mahakumbh 2028 · Ujjain</p>
+      <div className="bg-white border-b-2 border-saffron/20 px-4 py-3 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-saffron flex items-center justify-center text-white text-lg shadow">
+            🕉️
+          </div>
+          <div>
+            <h1 className="text-saffron font-bold text-xl leading-tight">KumbhFlow</h1>
+            <p className="text-roseGold text-xs">Simhastha Mahakumbh 2028 · Ujjain</p>
+          </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-gray-500 text-xs">Updated {lastUpdated}</span>
+          {lastUpdated && (
+            <div className="text-center hidden sm:block">
+              <p className="text-gray-400 text-xs">Last updated</p>
+              <p className="text-gray-600 text-xs font-medium">{lastUpdated}</p>
+            </div>
+          )}
           <button
             onClick={() => setMode(mode === "pilgrim" ? "authority" : "pilgrim")}
-            className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+            className={`px-4 py-2 rounded-full text-xs font-semibold shadow transition-all ${
               mode === "authority"
-                ? "bg-blue-600 text-white"
-                : "bg-orange-500 text-white"
+                ? "bg-sageDark text-white"
+                : "bg-saffron text-white"
             }`}
           >
             {mode === "pilgrim" ? "🙏 Pilgrim" : "🔒 Authority"}
@@ -65,18 +75,19 @@ function App() {
       </div>
 
       {/* Tab Bar */}
-      <div className="bg-gray-800 border-b border-gray-700 flex">
+      <div className="bg-white border-b border-saffron/10 flex shadow-sm">
         {tabs.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`flex-1 py-2 text-sm font-medium transition-all ${
+            className={`flex-1 py-3 text-xs font-semibold transition-all flex flex-col items-center gap-0.5 ${
               tab === t.id
-                ? "text-orange-400 border-b-2 border-orange-400"
-                : "text-gray-400 hover:text-gray-200"
+                ? "text-saffron border-b-2 border-saffron bg-saffronLight"
+                : "text-gray-400 hover:text-saffronSoft hover:bg-orange-50"
             }`}
           >
-            {t.label}
+            <span className="text-base">{t.icon}</span>
+            <span>{t.label}</span>
           </button>
         ))}
       </div>
@@ -84,8 +95,8 @@ function App() {
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
 
-        {/* Sidebar — GhatList */}
-        <div className="w-56 bg-gray-900 border-r border-gray-700 overflow-hidden">
+        {/* Sidebar */}
+        <div className="w-52 bg-white border-r border-saffron/10 overflow-hidden shadow-sm">
           <GhatList ghats={ghats} onSelect={setSelected} selected={selected} />
         </div>
 
@@ -97,24 +108,26 @@ function App() {
             </div>
           )}
           {tab === "route" && (
-            <div className="h-full overflow-y-auto">
+            <div className="h-full overflow-y-auto bg-cream">
               <RoutePanel ghats={ghats} />
             </div>
           )}
           {tab === "chat" && (
-            <div className="h-full">
+            <div className="h-full bg-cream">
               <ChatBot />
             </div>
           )}
           {tab === "alerts" && (
-            <div className="h-full overflow-y-auto">
+            <div className="h-full overflow-y-auto bg-cream">
               {mode === "authority"
                 ? <AlertDashboard ghats={ghats} />
                 : (
-                  <div className="p-6 text-center text-gray-400">
-                    <p className="text-4xl mb-3">🔒</p>
-                    <p className="text-white font-bold mb-1">Authority Mode Required</p>
-                    <p className="text-sm">Switch to Authority mode using the button in the header to access the alert dashboard.</p>
+                  <div className="flex flex-col items-center justify-center h-full text-center px-8">
+                    <div className="text-6xl mb-4">🔒</div>
+                    <h3 className="text-roseGold font-bold text-lg mb-2">Authority Access Only</h3>
+                    <p className="text-gray-400 text-sm leading-relaxed">
+                      Switch to Authority mode using the button in the header to view the full alert dashboard.
+                    </p>
                   </div>
                 )
               }
@@ -123,25 +136,30 @@ function App() {
         </div>
       </div>
 
-      {/* Selected Ghat Bar */}
+      {/* Selected Ghat Bottom Bar */}
       {selected && (
-        <div className={`px-4 py-2 flex items-center justify-between border-t border-gray-700 ${
-          selected.status === "critical" ? "bg-red-950" :
-          selected.status === "moderate" ? "bg-yellow-950" : "bg-green-950"
+        <div className={`px-4 py-3 flex items-center justify-between border-t-2 shadow-inner ${
+          selected.status === "critical"
+            ? "bg-red-50 border-red-200"
+            : selected.status === "moderate"
+            ? "bg-yellow-50 border-yellow-200"
+            : "bg-green-50 border-green-200"
         }`}>
-          <div>
-            <span className="text-white text-sm font-bold">{selected.name}</span>
-            <span className="text-gray-400 text-xs ml-2">{selected.current_density}% capacity</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-              selected.status === "critical" ? "bg-red-500 text-white" :
-              selected.status === "moderate" ? "bg-yellow-500 text-black" : "bg-green-500 text-black"
-            }`}>
-              {selected.status.toUpperCase()}
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">
+              {selected.status === "critical" ? "🚨" : selected.status === "moderate" ? "⚠️" : "✅"}
             </span>
-            <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-white text-lg">×</button>
+            <div>
+              <p className="text-gray-800 text-sm font-bold">{selected.name}</p>
+              <p className="text-gray-500 text-xs">{selected.current_density}% capacity · {selected.status}</p>
+            </div>
           </div>
+          <button
+            onClick={() => setSelected(null)}
+            className="text-gray-400 hover:text-gray-600 text-xl font-light"
+          >
+            ×
+          </button>
         </div>
       )}
     </div>

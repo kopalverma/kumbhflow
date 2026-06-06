@@ -105,7 +105,15 @@ def ask_agent(question: str) -> str:
         for message in reversed(messages):
             if hasattr(message, "content") and message.content:
                 if not hasattr(message, "tool_calls") or not message.tool_calls:
-                    return message.content
+                    content = message.content
+                    if isinstance(content, str):
+                        return content
+                    if isinstance(content, list):
+                        for block in content:
+                            if isinstance(block, dict) and block.get("type") == "text":
+                                return block["text"]
+                            if isinstance(block, str):
+                                return block
         return "I could not process your question. Please try again."
     except Exception as e:
         return f"Agent error: {str(e)}"

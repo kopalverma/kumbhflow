@@ -20,5 +20,8 @@ export const fetchRoute = async (fromId: string, toId: string): Promise<Route> =
 
 export const sendChat = async (message: string): Promise<string> => {
   const res = await axios.post(`${BASE}/api/chat`, { message });
-  return res.data.response;
+  const data = res.data;
+  if (typeof data.response === "string") return data.response;
+  if (typeof data.response === "object") return JSON.stringify(data.response);
+  return "Sorry, I could not process that response.";
 };

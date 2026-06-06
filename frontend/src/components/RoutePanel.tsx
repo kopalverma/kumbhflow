@@ -25,16 +25,10 @@ interface Props {
   ghats: Ghat[];
 }
 
-const statusColor = (status: string) => {
-  if (status === "safe") return "text-green-400";
-  if (status === "moderate") return "text-yellow-400";
-  return "text-red-400";
-};
-
-const statusBg = (status: string) => {
-  if (status === "safe") return "border-green-800 bg-green-950";
-  if (status === "moderate") return "border-yellow-800 bg-yellow-950";
-  return "border-red-800 bg-red-950";
+const statusConfig = (status: string) => {
+  if (status === "safe") return { text: "text-sageDark", bg: "bg-green-50 border-green-200", label: "✅ Safe", bar: "bg-sage" };
+  if (status === "moderate") return { text: "text-yellow-700", bg: "bg-yellow-50 border-yellow-200", label: "⚠️ Busy", bar: "bg-yellow-400" };
+  return { text: "text-red-700", bg: "bg-red-50 border-red-200", label: "🚨 Avoid", bar: "bg-red-400" };
 };
 
 const RoutePanel = ({ ghats }: Props) => {
@@ -45,8 +39,8 @@ const RoutePanel = ({ ghats }: Props) => {
   const [error, setError] = useState("");
 
   const handleFind = async () => {
-    if (!fromId || !toId) { setError("Please select both locations"); return; }
-    if (fromId === toId) { setError("Pick two different locations"); return; }
+    if (!fromId || !toId) { setError("Please select both start and destination"); return; }
+    if (fromId === toId) { setError("Please pick two different locations"); return; }
     setLoading(true);
     setError("");
     setRoute(null);
@@ -58,68 +52,125 @@ const RoutePanel = ({ ghats }: Props) => {
         setRoute(r as unknown as RouteResult);
       }
     } catch {
-      setError("No route found between these locations");
+      setError("Could not find a route. Please try different locations.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-4 h-full overflow-y-auto">
-      <h2 className="text-lg font-bold text-white mb-4">Safe Route Finder</h2>
+    <div className="p-4 max-w-xl mx-auto">
 
-      <select
-        value={fromId}
-        onChange={(e) => setFromId(e.target.value)}
-        className="w-full bg-gray-700 text-white rounded px-3 py-2 mb-2 text-sm"
-      >
-        <option value="">From — select start</option>
-        {ghats.map((g) => (
-          <option key={g.id} value={g.id}>{g.name}</option>
-        ))}
-      </select>
+      {/* Header */}
+      <div className="text-center mb-6">
+        <div className="text-4xl mb-2">🛕</div>
+        <h2 className="text-saffron font-bold text-xl">Safe Route Finder</h2>
+        <p className="text-gray-400 text-sm mt-1">We'll guide you through the least crowded path</p>
+      </div>
 
-      <select
-        value={toId}
-        onChange={(e) => setToId(e.target.value)}
-        className="w-full bg-gray-700 text-white rounded px-3 py-2 mb-3 text-sm"
-      >
-        <option value="">To — select destination</option>
-        {ghats.map((g) => (
-          <option key={g.id} value={g.id}>{g.name}</option>
-        ))}
-      </select>
+      {/* Form Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-saffron/10 p-4 mb-4">
+        <label className="text-gray-600 text-xs font-semibold uppercase tracking-wide mb-1 block">Starting From</label>
+        <select
+          value={fromId}
+          onChange={(e) => setFromId(e.target.value)}
+          className="w-full bg-saffronLight text-gray-700 rounded-xl px-3 py-2.5 mb-4 text-sm border border-saffron/20 outline-none focus:border-saffron"
+        >
+          <option value="">Select your starting location</option>
+          {ghats.map((g) => (
+            <option key={g.id} value={g.id}>{g.name}</option>
+          ))}
+        </select>
 
-      <button
-        onClick={handleFind}
-        disabled={loading}
-        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded text-sm disabled:opacity-50 mb-2"
-      >
-        {loading ? "Finding safe route..." : "Find Safe Route"}
-      </button>
+        <label className="text-gray-600 text-xs font-semibold uppercase tracking-wide mb-1 block">Going To</label>
+        <select
+          value={toId}
+          onChange={(e) => setToId(e.target.value)}
+          className="w-full bg-saffronLight text-gray-700 rounded-xl px-3 py-2.5 mb-4 text-sm border border-saffron/20 outline-none focus:border-saffron"
+        >
+          <option value="">Select your destination</option>
+          {ghats.map((g) => (
+            <option key={g.id} value={g.id}>{g.name}</option>
+          ))}
+        </select>
 
-      {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+        <button
+          onClick={handleFind}
+          disabled={loading}
+          className="w-full bg-saffron hover:bg-saffronSoft text-white font-bold py-3 rounded-xl text-sm shadow transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+        >
+          {loading ? (
+            <>
+              <span className="animate-spin">🔄</span> Finding safest path...
+            </>
+          ) : (
+            <>🗺️ Find Safe Route</>
+          )}
+        </button>
 
-      {route && (
-        <div className="mt-4">
-          <div className="bg-gray-800 rounded-lg p-3 mb-3">
-            <p className="text-white text-sm font-bold">{route.from} → {route.to}</p>
-            <p className="text-gray-400 text-xs mt-1">
-              {route.total_steps} stops · {route.total_distance_km} km · avg density {route.average_density}%
-            </p>
+        {error && (
+          <div className="mt-3 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+            <p className="text-red-600 text-sm">{error}</p>
           </div>
+        )}
+      </div>
 
-          {route.route.map((step) => (
-            <div key={step.step} className={`flex items-center gap-3 mb-2 border rounded px-3 py-2 ${statusBg(step.status)}`}>
-              <span className="text-gray-400 text-xs font-bold w-5">{step.step}</span>
-              <div className="flex-1">
-                <p className="text-white text-sm font-medium">{step.name}</p>
-                <p className={`text-xs ${statusColor(step.status)}`}>
-                  {step.density}% · {step.status}
-                </p>
+      {/* Route Result */}
+      {route && (
+        <div>
+          {/* Summary Card */}
+          <div className="bg-saffron rounded-2xl p-4 mb-4 text-white shadow">
+            <p className="font-bold text-base">{route.from} → {route.to}</p>
+            <div className="flex gap-4 mt-2">
+              <div className="text-center">
+                <p className="text-2xl font-bold">{route.total_steps}</p>
+                <p className="text-orange-200 text-xs">Stops</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold">{route.total_distance_km}</p>
+                <p className="text-orange-200 text-xs">Kilometres</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold">{route.average_density}%</p>
+                <p className="text-orange-200 text-xs">Avg Crowd</p>
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Steps */}
+          <div className="space-y-2">
+            {route.route.map((step, i) => {
+              const cfg = statusConfig(step.status);
+              return (
+                <div key={step.step} className={`bg-white rounded-xl border p-3 shadow-sm ${cfg.bg}`}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-full bg-saffron text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                      {step.step}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-gray-800 text-sm font-semibold">{step.name}</p>
+                      <div className="flex items-center justify-between mt-1">
+                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full mr-2 overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${cfg.bar}`}
+                            style={{ width: `${step.density}%` }}
+                          />
+                        </div>
+                        <span className={`text-xs font-semibold ${cfg.text}`}>{cfg.label}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {i < route.route.length - 1 && (
+                    <div className="ml-3.5 mt-1 text-gray-300 text-xs">↓</div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+            <p className="text-sageDark text-sm font-semibold">🙏 Safe travels · Har Har Mahadev</p>
+          </div>
         </div>
       )}
     </div>
