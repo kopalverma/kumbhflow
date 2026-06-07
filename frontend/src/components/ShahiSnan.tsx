@@ -75,7 +75,6 @@ const ShahiSnan = ({}: Props) => {
     }
   };
 
-  const selectedDate = dates.find(d => d.id === selectedSnan);
 
   return (
     <div className="p-4 max-w-xl mx-auto">
