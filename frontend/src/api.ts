@@ -30,3 +30,16 @@ export const fetchRisk = async () => {
   const res = await axios.get(`${BASE}/api/risk`);
   return res.data;
 };
+
+export const fetchShahiSnanList = async () => {
+  const res = await axios.get(`${BASE}/api/shahi-snan`);
+  return res.data;
+};
+
+export const fetchShahiSnanPlan = async (snanId: string, arrivalPoint: string) => {
+  const res = await axios.post(`${BASE}/api/shahi-snan/plan`, {
+    snan_id: snanId,
+    arrival_point: arrivalPoint,
+  });
+  return res.data;
+};

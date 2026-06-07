@@ -7,8 +7,9 @@ import RoutePanel from "./components/RoutePanel";
 import ChatBot from "./components/ChatBot";
 import AlertDashboard from "./components/AlertDashboard";
 import StampedeRisk from "./components/StampedeRisk";
+import ShahiSnan from "./components/ShahiSnan";
 
-type Tab = "map" | "route" | "chat" | "alerts" | "risk";
+type Tab = "map" | "route" | "chat" | "alerts" | "risk" | "snan";
 type Mode = "pilgrim" | "authority";
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
     { id: "chat", label: "AI Guide", icon: "🙏" },
     { id: "alerts", label: "Alerts", icon: "🔔" },
     { id: "risk", label: "Risk Index", icon: "⚡" },
+    { id: "snan", label: "Snan Planner", icon: "🪔" },
   ];
 
   return (
@@ -139,6 +141,11 @@ function App() {
           {tab === "risk" && (
             <div className="h-full overflow-y-auto bg-cream">
               <StampedeRisk />
+            </div>
+          )}
+          {tab === "snan" && (
+            <div className="h-full overflow-y-auto bg-cream">
+              <ShahiSnan ghats={ghats} />
             </div>
           )}
         </div>

@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from crowd_data import get_current_density, get_forecast , get_stampede_risk
+from crowd_data import get_current_density, get_forecast , get_stampede_risk , get_shahi_snan_plan, get_all_shahi_snan
 from route_engine import get_safe_route
 from agent import ask_agent
 import os
@@ -38,6 +38,18 @@ def forecast(ghat_id: str):
 @app.get("/api/risk")
 def risk():
     return get_stampede_risk()
+
+@app.get("/api/shahi-snan")
+def shahi_snan_list():
+    return get_all_shahi_snan()
+
+@app.post("/api/shahi-snan/plan")
+def shahi_snan_plan(data: dict):
+    snan_id = data.get("snan_id")
+    arrival_point = data.get("arrival_point")
+    if not snan_id or not arrival_point:
+        raise HTTPException(status_code=400, detail="snan_id and arrival_point required")
+    return get_shahi_snan_plan(snan_id, arrival_point)
 
 @app.post("/api/route")
 def route(req: RouteRequest):
