@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Ghat, Forecast, Route } from "./types";
 
-const BASE = "http://localhost:8000";
+const BASE = import.meta.env.VITE_API_URL || "";
 
 export const fetchGhats = async (): Promise<Ghat[]> => {
   const res = await axios.get(`${BASE}/api/ghats`);

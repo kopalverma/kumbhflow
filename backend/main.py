@@ -63,6 +63,14 @@ async def chat(req: ChatRequest):
     response = ask_agent(req.message)
     return {"response": response}
 
-frontend_dist = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
-if os.path.exists(frontend_dist):
-    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="static")
+# Serve frontend — works both locally and in Docker
+import pathlib
+base = pathlib.Path(__file__).parent
+dist_paths = [
+    base / "dist",
+    base / ".." / "frontend" / "dist",
+]
+for dist in dist_paths:
+    if dist.exists():
+        app.mount("/", StaticFiles(directory=str(dist), html=True), name="static")
+        break
