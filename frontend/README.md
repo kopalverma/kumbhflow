@@ -1,30 +1,24 @@
-# React + TypeScript + Vite
+---
+title: KumbhFlow
+emoji: 🕉️
+colorFrom: orange
+colorTo: yellow
+sdk: docker
+pinned: false
+---
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# KumbhFlow 🕉️
 
-Currently, two official plugins are available:
+Intelligent Crowd Flow Prediction & Route Optimization for Simhastha Mahakumbh 2028, Ujjain.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- Live crowd density map of 15 ghats in Ujjain
+- AI-powered safe route finder using Dijkstra algorithm
+- Stampede Risk Index with real-time scoring
+- Shahi Snan Planner for all 6 sacred bathing dates
+- KumbhFlow AI Guide powered by Gemini 2.5 Flash
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json', './tsconfig.app.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Tech Stack
+- Backend: FastAPI + LangGraph + Gemini 2.5 Flash
+- Frontend: React + TypeScript + Tailwind CSS + Leaflet.js
+- Deployment: Docker on Hugging Face Spaces
