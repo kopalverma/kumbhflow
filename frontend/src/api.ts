@@ -25,3 +25,8 @@ export const sendChat = async (message: string): Promise<string> => {
   if (typeof data.response === "object") return JSON.stringify(data.response);
   return "Sorry, I could not process that response.";
 };
+
+export const fetchRisk = async () => {
+  const res = await axios.get(`${BASE}/api/risk`);
+  return res.data;
+};

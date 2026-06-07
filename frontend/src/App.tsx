@@ -6,8 +6,9 @@ import GhatList from "./components/GhatList";
 import RoutePanel from "./components/RoutePanel";
 import ChatBot from "./components/ChatBot";
 import AlertDashboard from "./components/AlertDashboard";
+import StampedeRisk from "./components/StampedeRisk";
 
-type Tab = "map" | "route" | "chat" | "alerts";
+type Tab = "map" | "route" | "chat" | "alerts" | "risk";
 type Mode = "pilgrim" | "authority";
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
     { id: "route", label: "Safe Route", icon: "🛕" },
     { id: "chat", label: "AI Guide", icon: "🙏" },
     { id: "alerts", label: "Alerts", icon: "🔔" },
+    { id: "risk", label: "Risk Index", icon: "⚡" },
   ];
 
   return (
@@ -131,6 +133,12 @@ function App() {
                   </div>
                 )
               }
+              
+            </div>
+          )}
+          {tab === "risk" && (
+            <div className="h-full overflow-y-auto bg-cream">
+              <StampedeRisk />
             </div>
           )}
         </div>

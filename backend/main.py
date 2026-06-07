@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from crowd_data import get_current_density, get_forecast
+from crowd_data import get_current_density, get_forecast , get_stampede_risk
 from route_engine import get_safe_route
 from agent import ask_agent
 import os
@@ -34,6 +34,10 @@ def forecast(ghat_id: str):
     if result is None:
         raise HTTPException(status_code=404, detail="Ghat not found")
     return result
+
+@app.get("/api/risk")
+def risk():
+    return get_stampede_risk()
 
 @app.post("/api/route")
 def route(req: RouteRequest):
